@@ -25,18 +25,18 @@ end
 
 function CholeskyPreconditioner(A, memory=2)
     _A = get_data(A)
-    L, d, α = lldl(_A, memory=memory)
-    assert_pd(d, α)
-    update_L!(L, d)
-    return CholeskyPreconditioner(LowerTriangular(L), memory)
+    LLD = lldl(_A, memory=memory)
+    assert_pd(LLD.D, LLD.α)
+    update_L!(LLD.L, LLD.D)
+    return CholeskyPreconditioner(LowerTriangular(LLD.L), memory)
 end
 
 function UpdatePreconditioner!(C::CholeskyPreconditioner, A, memory=C.memory)
     _A = get_data(A)
-    L, d, α = lldl(_A, memory=memory)
-    assert_pd(d, α)
-    update_L!(L, d)
-    C.L = LowerTriangular(L)
+    LLD = lldl(_A, memory=memory)
+    assert_pd(LLD.D, LLD.α)
+    update_L!(LLD.L, LLD.D)
+    C.L = LowerTriangular(LLD.L)
     return C
 end
 
